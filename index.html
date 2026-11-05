@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#C0B7AF" />
+  <title>SMFM Admin</title>
+  <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+  <link rel="icon" type="image/png" href="/apple-touch-icon-180x180.png" />
+
+  <style>
+    /* Fonts, colours and metrics copied from SMFM_react/src/index.css */
+    @font-face {
+      font-family: 'FOSS-Modern-Bold';
+      src: url('/fonts/FOSS-Modern-Bold.otf') format('opentype');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'SisterMidnight-Regular';
+      src: url('/fonts/SisterMidnight-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --Font1: 'FOSS-Modern-Bold', system-ui, Avenir, Helvetica, Arial, sans-serif;
+      --Font2: 'SisterMidnight-Regular', system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+      --Font1-leading: 0.9;
+      --Font1-tracking: -0.06em;
+      --Font2-leading: 0.96;
+      --Font2-tracking: -0.05em;
+
+      --Colour1: #C0B7AF;
+      --Colour2: #322824;
+      --Colour3: #000000;
+
+      /* Paper noise texture, same as the main site */
+      --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+
+      font-family: var(--Font1);
+      line-height: var(--Font1-leading);
+      letter-spacing: var(--Font1-tracking);
+      font-weight: 400;
+      background-color: var(--Colour1);
+      color: var(--Colour2);
+
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    img, svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      background-color: var(--Colour1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Paper noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: var(--noise-texture);
+      background-size: 200px 200px;
+      background-repeat: repeat;
+      opacity: 0.4;
+      mix-blend-mode: overlay;
+      transform: translateZ(0);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+    }
+
+    .header__logo img {
+      height: 3rem;
+      width: auto;
+    }
+
+    .header__badge {
+      font-family: var(--Font1);
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      background-color: var(--Colour2);
+      color: var(--Colour1);
+      border-radius: 16px;
+      white-space: nowrap;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+
+    /* Sections */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section__title {
+      font-family: var(--Font1);
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--Colour2);
+      margin: 0 0 1rem 0;
+      line-height: var(--Font1-leading);
+      letter-spacing: var(--Font1-tracking);
+    }
+
+    /* Link tiles, styled like the site's cards */
+    .links {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+      grid-auto-rows: minmax(6.5rem, auto);
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      height: 100%;
+      min-height: 6.5rem;
+      padding: 1.25rem 1.5rem;
+      background-color: var(--Colour2);
+      color: var(--Colour1);
+      border-radius: 1.44rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .link-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .link-card:focus-visible {
+      outline: 3px solid var(--Colour2);
+      outline-offset: 3px;
+    }
+
+    .link-card__text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      min-width: 0;
+    }
+
+    .link-card__label {
+      font-family: var(--Font1);
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .link-card__description {
+      font-family: var(--Font1);
+      font-size: 0.85rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      opacity: 0.8;
+    }
+
+    /* Round arrow, same as the site's "See more" tile */
+    .link-card__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 50%;
+      border: 2px solid var(--Colour1);
+      transition: transform 0.2s ease;
+    }
+
+    .link-card:hover .link-card__icon {
+      transform: translateX(3px);
+    }
+
+    /* Featured tile: two columns wide and two rows tall */
+    .links__item--featured {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .link-card--featured {
+      align-items: flex-end;
+      padding: 2rem;
+    }
+
+    .link-card--featured .link-card__label {
+      font-size: 2.2rem;
+    }
+
+    .link-card--featured .link-card__description {
+      font-size: 1.05rem;
+    }
+
+    .link-card--featured .link-card__icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    /* Tile with no link yet */
+    .link-card--disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .link-card--disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .link-card__soon {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 0.35rem 0.7rem;
+      border: 2px solid var(--Colour1);
+      border-radius: 16px;
+      white-space: nowrap;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 1rem 2rem 2rem;
+    }
+
+    .footer__divider {
+      width: 100%;
+      height: 1px;
+      background-color: var(--Colour2);
+      margin-bottom: 1rem;
+    }
+
+    .footer__copyright {
+      text-align: center;
+      color: var(--Colour2);
+      font-size: 0.75rem;
+      font-family: var(--Font1);
+      margin: 0;
+    }
+
+    @media (max-width: 767px) {
+      .header {
+        padding: 1rem;
+        padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+      }
+
+      .header__logo img {
+        height: 2.25rem;
+      }
+
+      .main {
+        padding: 1.5rem 1rem;
+      }
+
+
+      .section__title {
+        font-size: 1.6rem;
+      }
+
+      .link-card {
+        border-radius: 1.125rem;
+      }
+
+      .link-card--featured {
+        padding: 1.5rem;
+      }
+
+      .link-card--featured .link-card__label {
+        font-size: 1.8rem;
+      }
+
+      .footer {
+        padding: 1rem 1rem 2rem;
+      }
+    }
+
+    /* One column: the featured tile spans the full width instead of forcing a second column */
+    @media (max-width: 560px) {
+      .links__item--featured {
+        grid-column: 1 / -1;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a class="header__logo" href="https://radio.sistermidnight.org" aria-label="Sister Midnight FM website">
+      <img src="/Images/Wide Logo Brown.webp" alt="Sister Midnight FM" />
+    </a>
+    <span class="header__badge">Admin</span>
+  </header>
+
+  <main class="main">
+    <!--
+      To add a link, copy one <li> block into a section and change the href, label and description.
+      Copy a whole <section> to add a new group.
+      Links to other sites open in a new tab.
+    -->
+
+    <section class="section">
+      <h1 class="section__title">Admin Links</h1>
+      <ul class="links">
+        <li class="links__item--featured">
+          <a class="link-card link-card--featured" href="https://strapi.radio.sistermidnight.org/admin" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Strapi back end</span>
+              <span class="link-card__description">Add and edit episodes, shows and artists</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://app.radiocult.fm/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Radio Cult</span>
+              <span class="link-card__description">Station dashboard, stream and uploads</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://calendar.google.com/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Calendar</span>
+              <span class="link-card__description">The station's Google Calendar</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://sistermidnightfm.setmore.com/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Studio booking</span>
+              <span class="link-card__description">Book a slot in the studio</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://smfmschedule.netlify.app/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Schedule maker</span>
+              <span class="link-card__description">Build the weekly broadcast schedule</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://smfmcommsgenerator.netlify.app/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Comms app</span>
+              <span class="link-card__description">Make posts and comms for shows</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="link-card" href="https://radio.sistermidnight.org/" target="_blank" rel="noopener">
+            <span class="link-card__text">
+              <span class="link-card__label">Radio website</span>
+              <span class="link-card__description">The public Sister Midnight FM site</span>
+            </span>
+            <span class="link-card__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </li>
+        <li>
+          <!-- No link yet: swap this <div> for an <a class="link-card" href="..." target="_blank" rel="noopener"> and the badge for the arrow icon -->
+          <div class="link-card link-card--disabled" aria-disabled="true">
+            <span class="link-card__text">
+              <span class="link-card__label">Producer guide</span>
+              <span class="link-card__description">How to prepare and upload a show</span>
+            </span>
+            <span class="link-card__soon">Coming soon</span>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__divider"></div>
+    <p class="footer__copyright">Sister Midnight FM</p>
+  </footer>
+</body>
+</html>
