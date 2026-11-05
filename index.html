@@ -217,9 +217,8 @@
       transform: translateX(3px);
     }
 
-    /* Featured tile: two columns wide and two rows tall */
+    /* Featured tile: one column wide and two rows tall */
     .links__item--featured {
-      grid-column: span 2;
       grid-row: span 2;
     }
 
@@ -229,7 +228,7 @@
     }
 
     .link-card--featured .link-card__label {
-      font-size: 2.2rem;
+      font-size: 1.6rem;
     }
 
     .link-card--featured .link-card__description {
@@ -311,18 +310,11 @@
       }
 
       .link-card--featured .link-card__label {
-        font-size: 1.8rem;
+        font-size: 1.4rem;
       }
 
       .footer {
         padding: 1rem 1rem 2rem;
-      }
-    }
-
-    /* One column: the featured tile spans the full width instead of forcing a second column */
-    @media (max-width: 560px) {
-      .links__item--featured {
-        grid-column: 1 / -1;
       }
     }
 
@@ -357,8 +349,8 @@
             </span>
           </a>
         </li>
-        <li>
-          <a class="link-card" href="https://app.radiocult.fm/" target="_blank" rel="noopener">
+        <li class="links__item--featured">
+          <a class="link-card link-card--featured" href="https://app.radiocult.fm/" target="_blank" rel="noopener">
             <span class="link-card__text">
               <span class="link-card__label">Radio Cult</span>
               <span class="link-card__description">Station dashboard, stream and uploads</span>
